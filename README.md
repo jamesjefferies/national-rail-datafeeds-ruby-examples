@@ -14,3 +14,16 @@ Getting started
 This is a ruby example so you need Ruby installed (I'm using 1.9.3 via RVM), rubygems installed and the stomp ruby gem installed `gem install stomp`
 
 You will of course, also need to have signed up to the Network Rail datafeed programme and have your login credentials.
+
+Receiving messages
+------------------
+
+Before running the code, ensure you have set the environment variables for your login credentials.
+
+All being well, you should then slowly receive updates from the topic you have selected. The example below uses Train positioning data for the East Midlands (TD_MC_EM_SIG_AREA) and assumes that you have subscribed to that feed using the [network rail control panel](https://datafeeds.networkrail.co.uk/ntrod/myFeeds)
+
+The updates you receive from this program are not formatted at all, it's just sending the message straight to string. Of course, this is just helping you know you're set up correctly. So you would get something like:
+
+`<Stomp::Message headers={"message-id"=>"ID:blahblah", "destination"=>"/topic/TD_MC_EM_SIG_AREA", "timestamp"=>"1341436026840", "expires"=>"1341436326840", "persistent"=>"true", "priority"=>"4"} body='[{"CA_MSG":{"to":"1234","time":"1341435963000","area_id":"WH","msg_type":"CA","from":"5678","descr":"1Z99"}}]' command='MESSAGE' >`
+
+Ultimately of course, you'd process the JSON from the body.
