@@ -23,7 +23,10 @@ begin
     # Use JSON library to parse the messge body
     message_body = JSON.parse(@msg.body)
 
+    # Assume mongo database is called rail (or it will create one if it doesn't exist
     db = Mongo::Connection.new.db("rail")
+
+    # Create/use collection called td
     coll = db.collection("td")
 
     message_body.each do |td| 
@@ -31,7 +34,7 @@ begin
       # Sanity check debug, output each td message as nice looking JSON 
       # puts JSON.pretty_generate(td)   
       
-      # insert into collection
+      # insert into collection and return with the id 
       id = coll.insert(td)
 
     end
