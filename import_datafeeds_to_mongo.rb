@@ -17,26 +17,26 @@ begin
   @connection = Stomp::Connection.open @user, @password, @host, @port, true 
   @connection.subscribe @destination 
 
-#  while true
+  while true
     @msg = @connection.receive
-    #output = @msg.body
-    pretty = JSON.parse(@msg.body)
 
- #   puts JSON.pretty_generate(pretty)
+    # Use JSON library to parse the messge body
+    message_body = JSON.parse(@msg.body)
 
     db = Mongo::Connection.new.db("rail")
-    collection = db.collection("td")
+    coll = db.collection("td")
 
-    pretty.each do |x| 
- 
-      puts JSON.pretty_generate(x)   
-      id = collection.insert(x)
-      puts "total size of collection" + collection.count() + " " +  id + " has " + x 
+    message_body.each do |td| 
+
+      # Sanity check debug, output each td message as nice looking JSON 
+      # puts JSON.pretty_generate(td)   
+      
+      # insert into collection
+      id = coll.insert(td)
 
     end
+  end 
 
-#  end 
-
-    @connection.disconnect
+  @connection.disconnect
 rescue 
 end
