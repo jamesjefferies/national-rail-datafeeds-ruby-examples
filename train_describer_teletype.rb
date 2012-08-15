@@ -29,9 +29,7 @@ class TrainDescriber
   attr_accessor :time, :location, :headcode
 
   def to_s
-    "Train: #{@headcode}--#{@time} (#{@location})"
- #   @time + " with headcode " 
-    #+ @headcode + " at location " + @location
+    "#{@time} Train: #{@headcode} is at #{@location}"
   end
 end
 
@@ -70,15 +68,13 @@ begin
 
         thismsg = td.fetch("CA_MSG")
         time = "Unknown" 
-        puts "Headcode: " + thismsg.fetch("descr")
+        # puts "Headcode: " + thismsg.fetch("descr")
        
         t.headcode = thismsg.fetch("descr") 
-        puts thismsg.to_s
-        puts "ready to begin" 
+        # puts thismsg.to_s
        
         begin
           thistime = (thismsg.fetch("time", "1344954186000").to_i / 1000)
-          puts thistime.to_s
           time = Time.at(thistime)
           t.time = time
         rescue Exception 
@@ -86,46 +82,27 @@ begin
         end
 
         from = thismsg.fetch("from")
-        puts "from " + from + " which is " 
 
         from_berth_step = coll.find_one({ "from_berth" => "#{from}"  })
-        #puts from_berth_step
-        #puts from_berth_step.class
 
         # Example from berth step from poggs data
         #
         # {"_id"=>BSON::ObjectId('502b5a7df49d04d930003309'), "td_area"=>"SK", "step_type"=>"B", "from_berth"=>"3639", "to_berth"=>"3643", "stanox"=>"42302", "stanme"=>"MADELEY", "event"=>"D", "platform"=>"", "line"=>"F", "trust_berth_offset"=>"11", "route"=>"2", "description"=>"21-09-09"}
 
-=begin
-        unless from_berth_step.nil?
-          from_berth = from_berth_step.fetch("from_berth")
-          puts from_berth
-          puts from_berth.class
-        end
-=end
-
         unless from_berth_step.nil?
           stanox = from_berth_step.fetch("stanox")
-          puts stanox
           location_data =  Location.where("stanox = ?", stanox).first
-          puts location_data.location
           t.location = location_data.location
         end
 
-      #  open('AllBerthSteps_2012-06.csv') do |f| 
-      #    puts f.grep(/#{from}/) 
-      #  end       
+        # Temporary way of getting location!
+        #  open('AllBerthSteps_2012-06.csv') do |f| 
+        #    puts f.grep(/#{from}/) 
+        #  end       
 
-        puts time
-        puts thismsg.class
-        begin
-          puts t.to_s
-        rescue Exception 
-          print "Boom bang bang #{$!}"  
-        end
+        puts t.to_s
        
       end
-
     end
   end 
 
