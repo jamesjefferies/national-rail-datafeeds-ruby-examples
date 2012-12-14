@@ -4,6 +4,11 @@ require 'json'
 require 'mongo'
 require 'active_record'  
 require 'mysql2'
+require 'pusher'
+
+Pusher.app_id = '25850'
+Pusher.key = '3a053988aaed74f037eb'
+Pusher.secret = '809d36326d9d2aebc982'
 
 ActiveRecord::Base.establish_connection(  :adapter=> "mysql",  :host => "localhost",  :database=> "nrdata", :username=> "root", :password=> "password", :adapter => "mysql2")  
                                          
@@ -99,13 +104,21 @@ begin
         #  open('AllBerthSteps_2012-06.csv') do |f| 
         #    puts f.grep(/#{from}/) 
         #  end       
+        data = {
+          'id' => @id,
+          'body' => t.to_s, #Set this to be the headcode and location
+          'published' => t.time, #Set this to be the string containing the date
+          'type' => @type,
+        }
 
         puts t.to_s
-       
+        Pusher['site-activity'].trigger('activity', data)
+
       end
     end
   end 
 
   @connection.disconnect
-rescue 
+rescue Exception 
+  print "Boom bang bang #{$!}"  
 end
